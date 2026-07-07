@@ -12,6 +12,21 @@ interface DocumentChunk {
 
 @Injectable()
 export class AppService {
+  private getOpenAIConfiguration(apiKey: string) {
+    return {
+      apiKey,
+      baseURL: process.env.OPENAI_BASE_URL ?? 'https://openrouter.ai/api/v1',
+    };
+  }
+
+  private getChatModelName() {
+    return process.env.OPENAI_MODEL ?? 'openai/gpt-3.5-turbo';
+  }
+
+  private getEmbeddingModelName() {
+    return process.env.OPENAI_EMBEDDING_MODEL ?? 'openai/text-embedding-3-small';
+  }
+
   private createDocumentChunks(text: string, chunkSize = 1000, chunkOverlap = 200) {
     const normalizedText = text.replace(/\s+/g, ' ').trim();
     const chunks: DocumentChunk[] = [];
@@ -60,14 +75,12 @@ export class AppService {
       const pineconeClient = new Pinecone({ apiKey: pineconeApiKey });
       const pineconeIndex = pineconeClient.Index(pineconeIndexName);
 
-      const openAIConfig = {
-        apiKey: openAIApiKey,
-        baseURL: process.env.OPENAI_BASE_URL ?? 'https://free.openrouter.ai/v1',
-      };
+      const openAIConfig = this.getOpenAIConfiguration(openAIApiKey);
+      const embeddingModelName = this.getEmbeddingModelName();
 
       const embeddings = new OpenAIEmbeddings({
         openAIApiKey,
-        model: 'text-embedding-3-small',
+        model: embeddingModelName,
         configuration: openAIConfig,
       });
 
@@ -103,14 +116,12 @@ export class AppService {
       const pineconeClient = new Pinecone({ apiKey: pineconeApiKey });
       const pineconeIndex = pineconeClient.Index(pineconeIndexName);
 
-      const openAIConfig = {
-        apiKey: openAIApiKey,
-        baseURL: process.env.OPENAI_BASE_URL ?? 'https://free.openrouter.ai/v1',
-      };
+      const openAIConfig = this.getOpenAIConfiguration(openAIApiKey);
+      const embeddingModelName = this.getEmbeddingModelName();
 
       const embeddings = new OpenAIEmbeddings({
         openAIApiKey,
-        model: 'text-embedding-3-small',
+        model: embeddingModelName,
         configuration: openAIConfig,
       });
 
@@ -121,7 +132,7 @@ export class AppService {
 
       const llm = new ChatOpenAI({
         openAIApiKey,
-        modelName: 'gpt-3.5-turbo',
+        modelName: this.getChatModelName(),
         configuration: openAIConfig,
       });
 
