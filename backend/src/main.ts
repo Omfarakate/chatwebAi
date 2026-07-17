@@ -32,19 +32,27 @@ loadDotEnv();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3002',
+    'https://chatweb-n9md01m1p-omfarakates-projects.vercel.app',
+  ];
+
   app.enableCors({
-    origin: 'http://localhost:3002',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin not allowed by CORS: ${origin}`));
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   });
-  app.enableCors({
-  origin: 'https://chatweb-n9md01m1p-omfarakates-projects.vercel.app', // <-- Paste your EXACT Vercel URL here
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-});
-app.enableCors({
-  origin: true, 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-});
-  await app.listen(process.env.PORT ?? 3001);
+
+  await app.listen(process.env.PORT ?? 3005);
 }
 bootstrap();

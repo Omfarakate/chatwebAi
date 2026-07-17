@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { buildApiUrl } from '../lib/api';
 
 export default function ChatbotPage() {
   const [file, setFile] = useState(null);
@@ -17,8 +18,7 @@ export default function ChatbotPage() {
     formData.append('file', file);
 
     try {
-      // UPDATED TO YOUR RENDER URL
-      const res = await fetch('https://chatbot-asfd.onrender.com/api/upload', {
+      const res = await fetch(buildApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
@@ -41,8 +41,7 @@ export default function ChatbotPage() {
     setIsLoading(true);
 
     try {
-      // UPDATED TO YOUR RENDER URL
-      const res = await fetch('https://chatbot-asfd.onrender.com/api/chat', {
+      const res = await fetch(buildApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input }),
