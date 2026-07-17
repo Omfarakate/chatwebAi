@@ -22,13 +22,16 @@ export default function ChatbotPage() {
         method: 'POST',
         body: formData,
       });
-      if (res.ok) {
-        setUploadStatus('Upload and training successful!');
-      } else {
-        setUploadStatus('Upload failed.');
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        setUploadStatus(errorText || 'Upload failed.');
+        return;
       }
+
+      setUploadStatus('Upload and training successful!');
     } catch (error) {
-      setUploadStatus('Error connecting to backend.');
+      setUploadStatus(error.message || 'Error connecting to backend.');
     }
   };
 
@@ -46,12 +49,16 @@ export default function ChatbotPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input }),
       });
-      
-      const data = await res.json();
-      
-      setMessages([...newMessages, { role: 'bot', text: data.answer }]);
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(data?.message || data?.error || `Server error (${res.status})`);
+      }
+
+      setMessages([...newMessages, { role: 'bot', text: data?.answer || 'No answer returned.' }]);
     } catch (error) {
-      setMessages([...newMessages, { role: 'bot', text: 'Error connecting to server.' }]);
+      setMessages([...newMessages, { role: 'bot', text: error.message || 'Error connecting to server.' }]);
     } finally {
       setIsLoading(false);
     }

@@ -40,8 +40,13 @@ async function bootstrap() {
     'http://127.0.0.1:3001',
     'http://127.0.0.1:3002',
     'https://chatweb-n9md01m1p-omfarakates-projects.vercel.app',
+    'https://chatweb-eee7q8qkx-omfarakates-projects.vercel.app',
   ];
-  const allowedOriginPatterns = [/^http:\/\/localhost:\d+$/, /^http:\/\/127\.0\.0\.1:\d+$/];
+  const allowedOriginPatterns = [
+    /^http:\/\/localhost:\d+$/,
+    /^http:\/\/127\.0\.0\.1:\d+$/,
+    /^https:\/\/.*\.vercel\.app$/,
+  ];
 
   app.enableCors({
     origin: (origin, callback) => {
