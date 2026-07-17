@@ -33,7 +33,6 @@ export class AppController {
     }
 
     try {
-      // 3. Pass the raw file data (buffer) to the service for processing
       const result = await this.appService.processAndIngestPdf(file.buffer);
 
       return {
