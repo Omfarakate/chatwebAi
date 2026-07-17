@@ -35,6 +35,11 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:3002',
   });
+  app.enableCors({
+  origin: 'https://chatweb-n9md01m1p-omfarakates-projects.vercel.app', // <-- Paste your EXACT Vercel URL here
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+});
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
